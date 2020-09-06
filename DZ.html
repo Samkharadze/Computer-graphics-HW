@@ -1,28 +1,20 @@
 <html>
-
 <head>
-
 </head>
-
 <style>
     body 
     {
         background:#000000;
-
     }
-
    
 </style>
-
 <body>
- 
-
     <canvas width='1000' height='500' id="dz"> </canvas>
-
     <script>
         var canvas = document.getElementById('dz');
         var ctx = canvas.getContext('2d');
 
+        
         function glav(move) {
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -41,22 +33,17 @@
                 ctx.fillRect(start_point[0] + i, start_point[1] - i/2, 7, 7);
                 ctx.fillRect(start_point[0] + width - i, start_point[1] - i/2, 7, 7);
             }
-
-           
-            
+      
         }
 
         var move = 0;
-
+        
         setInterval(function () {
             glav(move);
             draw_triangle();
             move += 0.035; 
-
         });
-
     </script>
 
 </body>
-
 </html>
