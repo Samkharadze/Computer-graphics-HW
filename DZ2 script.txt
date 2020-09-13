@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+<div>
+	<canvas width="750" height="650" id='canvas'>
+	</canvas>
+</div>
+
+
+<script>
+var image = new Image();
+image.crossOrigin = 'CB';
+image.src = 'https://www.tokkoro.com/picsup/5413139-travis-scott-desktop-wallpaper.jpg'
+image.onload = function() 
+{
+	drawTravis(this);
+};
+
+function drawTravis(image) 
+{
+	var canvas = document.getElementById('canvas');
+	var ctx = canvas.getContext('2d');
+	ctx.drawImage(image, 0, 0, 650, 750);
+	var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+	var x = imageData.data;
+	var original = function()
+       {
+		ctx.drawImage(image, 0, 0, 650, 750);
+		imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+		x = imageData.data;
+	}
+	var grayscale = function()
+        {
+		for (var i = 0; i < x.length; i += 4) 
+                {
+			var a = (x[i] + x[i + 1] + x[i + 2]) / 3;
+			x[i] = x[i + 1] =x[i + 2] = a;  
+		}
+		ctx.putImageData(imageData, 0, 0);
+};
+	
+	var originalbutton = document.getElementById('originalbutton');
+	originalbutton.addEventListener('click', original);
+	var grayscalebutton = document.getElementById('grayscalebutton');
+	grayscalebutton.addEventListener('click', grayscale);
+
+}
+        
+</script>
+<div>
+<input type="button" class="btn" id="originalbutton" value="Original Version">
+<input type="button" class="btn" id="grayscalebutton" value="Grayscale Version">
+</div>
+</body>
+</html>
