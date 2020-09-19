@@ -1,0 +1,72 @@
+<html>
+<head>
+</head>
+<style>
+body 
+    {
+        background:#000000;
+    }
+</style>
+<body>
+<canvas width='1000' height='1000' id="canvas"> </canvas>
+<script>
+        
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        var a = 1;
+        var a0 = 0;
+        var b0 = 0;
+        function draw(a0, b0, a1, b1) 
+        {
+            var A = a0;
+            var B = b0;
+            var move_A = 1;
+            var move_B = 1;
+
+            if (a0 > a1)
+                move_A = -1;
+            if (b0 > b1)
+                move_B = -1;
+            var dx = Math.abs(a1 - a0);
+            var dy = Math.abs(b1 - b0);
+            var E = dx - dy;
+            var pixels_number = 0;
+            if (dx > dy)
+                pixels_number = dx;
+            else
+                pixels_number = dy;
+
+            while (pixels_number > 0) {
+                pixels_number -= 1;
+                ctx.fillRect(A, B, 5, 5);
+                if (dy >= -2 * E) {
+                    A += move_A;
+                    E -= dy;
+                }
+                if (dx >= 2 * E) {
+                    B += move_B;
+                    E += dx;
+                }
+            }
+        }
+        canvas.addEventListener('click', (event) => {
+            if (a) {
+                if (event.offsetX > 0 && event.offsetX < canvas.width)
+                    if (event.offsetY > 0 && event.offsetY < canvas.height) {
+                        a0 = event.offsetX;
+                        b0 = event.offsetY;
+                        ctx.fillStyle = '#FF0000';
+                        ctx.fillRect(a0, b0, 5, 5);
+                        a = 0;
+                    }
+            }
+            else
+            {
+                ctx.fillRect(event.offsetX, event.offsetY, 5, 5);
+                draw(a0, b0, event.offsetX, event.offsetY);
+                a = 1;
+            }
+        })
+</script>
+</body>
+</html>
