@@ -1,0 +1,72 @@
+<html>
+    <body>
+        <canvas width="500" , height="400" , id="l_1"> </canvas>
+        <canvas width="500" , height="400" , id="l_2"> </canvas>
+        <canvas width="500" , height="400" , id="l_3"> </canvas>
+        <script>
+
+            var canvas = document.getElementById("l_1");
+            var ctx = canvas.getContext("2d");
+            var canvas2 = document.getElementById("l_2");
+            var ctx2 = canvas2.getContext("2d");
+            var canvas3 = document.getElementById("l_3");
+            var ctx3 = canvas3.getContext("2d");
+            let img = new Image();
+            img.crossOrigin = "anonymus";
+            img.src = "https://upload.wikimedia.org/wikipedia/commons/9/9c/Travis_Scott_February_2016.jpg";
+            let avg=0;
+            let img_data = new ImageData(1,1);
+            let img_data2= new ImageData(canvas3.width,canvas3.height);
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height); 
+                img_data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+                for (var i = 0; i < img_data.data.length; i += 4)
+                    {
+                        avg = (img_data.data[i] + img_data.data[i+1] + img_data.data[i+2])/3;
+                        
+                        img_data.data[i] = avg;
+                        img_data.data[i + 1] = avg;
+                        img_data.data[i + 2] = avg;
+                        img_data.data[i + 3] = 255;
+                    }
+
+                ctx2.putImageData(img_data, 0, 0, 0, 0, canvas2.width, canvas2.height);
+
+                for (let y=1; y<canvas.height-1; y++) 
+                  {
+                        for (let x=1; x<canvas.width-1 ; x++) 
+                          {
+                                  let A_x =  
+                                           (img_data.data[((y+1)*canvas.width+x-1)*4]+
+                                           2*(img_data.data[((y+1)*canvas.width+x)*4])+
+                                           img_data.data[((y+1)*canvas.width+x+1)*4])-
+                                           (img_data.data[((y-1)*canvas.width+x-1)*4]+
+                                           2*(img_data.data[((y-1)*canvas.width+x)*4])+
+                                           img_data.data[((y-1)*canvas.width+x+1)*4]);
+                                  let A_y = 
+                                           (img_data.data[((y-1)*canvas.width+x+1)*4]+
+                                           2*(img_data.data[((y)*canvas.width+x+1)*4])+
+                                           img_data.data[((y+1)*canvas.width+x+1)*4])-
+                                           (img_data.data[((y-1)*canvas.width+x-1)*4]+
+                                           2*(img_data.data[((y)*canvas.width+x-1)*4])+
+                                           img_data.data[((y+1)*canvas.width+x-1)*4]);
+                                  
+                                  let A=Math.ceil(Math.sqrt(A_x*A_x+A_y*A_y));
+
+                                  let T = Math.atan2(A_y,A_x);
+
+                                  img_data2.data[(y*canvas.width+x)*4] = A;
+                                  img_data2.data[(y*canvas.width+x)*4+1] = A;
+                                  img_data2.data[(y*canvas.width+x)*4+2] = A;
+                                  img_data2.data[(y*canvas.width+x)*4+3] = 255;
+                          }
+                  }
+
+                console.log(img_data2);
+                ctx3.putImageData(img_data2, 0, 0, 0, 0, canvas3.width, canvas3.height);
+
+                }
+        </script>
+    </body>
+</html>
