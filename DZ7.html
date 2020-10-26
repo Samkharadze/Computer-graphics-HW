@@ -1,0 +1,164 @@
+<HTML>
+<HEAD>
+<STYLE>
+	body {
+		margin: 0;
+	}
+	#lab7 {
+		border-width: 3px;
+		border-color: #000000;
+		border-style: solid; 
+	}
+	.buttons {
+		margin: 30px 0px 0px 500px;
+	}
+</STYLE>
+</HEAD>
+<BODY>
+	<div class= "canvas">
+		<canvas id='lab7' height='500' width='1000' style='border-width: 3px' />
+	</div>
+	<div class = "buttons"> 
+		<button type="button" id="secondButton" onclick="rectFunction()">Rectangle</button> 
+		<button type="button" id="secondButton" onclick="drawFunction()">Draw</button>  		
+	</div>
+	<div>
+		<h1>Rectangle - Выбрать на плоскости несколько точек для многоугольника</h1>
+		<h1>Draw и нажатие на экран(плоскость) - рисуется и заполняется многоугольник</h1>	
+	</div>
+<script>
+	var canvas = document.getElementById('lab7');
+	var ctx = canvas.getContext('2d');
+	var buffer=[];
+	
+	function getMousePos(canvas) {
+		return {
+			x: event.clientX - 3,
+			y: event.clientY - 3
+		};
+	}
+	
+	function drawLine(pt1, pt2)
+	{
+        ctx.beginPath()
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "black";
+        ctx.moveTo(pt1[0], pt1[1]);
+        ctx.lineTo(pt2[0], pt2[1]);
+        ctx.stroke();
+	}
+	
+	
+	function fillMnog()
+	{
+		console.log(buffer);
+        buffer = rastFig();
+		console.log(buffer);
+        for(var i = 0; i < buffer.length - 2; i++)
+        {
+            if(buffer[i][1] == buffer[i+2][1] && buffer[i][1] != buffer[i+3][1]){
+                drawLine(buffer[i],buffer[i+2]);
+                i+=2;
+            }
+            else if(buffer[i][1] == buffer[i+1][1]){
+                drawLine(buffer[i],buffer[i+1]);
+                i++;
+            }
+        }
+	}
+
+		function OLine(pt1, pt2)
+		{
+			if(pt1[1] == pt2[1]){return true;}	
+			return false;
+		}
+
+                function sortFun(pt1,pt2)
+		{
+			if(pt1[1] > pt2[1]) return 1;
+			if(pt1[1] < pt2[1]) return -1;
+			if(pt1[1] == pt2[1])
+			{
+				if(pt1[0] > pt2[0]) return 1;
+				if(pt1[0] < pt2[0]) return -1;
+				if(pt1[0] == pt2[0]) return 0;
+			}
+		}
+
+		function rastFig()
+		{
+			var poly = [];
+			for(var i = 0; i < buffer.length - 1; i++)
+			{
+				if(!OLine(buffer[i],buffer[i+1])){
+					poly = poly.concat(restLine(buffer[i],buffer[i+1]));
+				}
+				else {poly.push(buffer[i]);}
+			}
+			if(!OLine(buffer[buffer.length - 1], buffer[0]))
+			{
+				poly = poly.concat(restLine(buffer[buffer.length - 1], buffer[0]));
+			}
+			return poly.sort(sortFun);
+		}
+
+		function restLine(pt1, pt2)
+		{
+			var y = pt1[1],
+			dx = (pt2[0] - pt1[0])/(pt2[1] - pt1[1]),
+			x = pt1[0],
+			poly = [];
+
+			if(pt1[1] < pt2[1]){
+				while(y <= pt2[1]){
+					poly.push([x,y]);
+					y++;
+					x += dx;
+				}
+			}
+			else{
+				while(y >= pt2[1]){
+					poly.push([x,y]);
+					y--;
+					x -= dx;
+				}
+			}
+			return poly;
+		}
+
+	
+
+	var rectListener = function(event) {
+		var mousePos = getMousePos(canvas);
+		buffer.push([mousePos.x,mousePos.y]);
+		console.log(buffer);
+	}
+
+	var drawListener = function(event) {
+		console.log(buffer);
+		var tmpBuffer = [];
+		tmpBuffer = buffer;
+		for(var j = 0; j < tmpBuffer.length; j++) {
+			if(j == tmpBuffer.length - 1){
+				tmpBuffer = buffer;
+				drawLine(tmpBuffer[j], tmpBuffer[0]);
+			}
+			else {tmpBuffer = buffer; drawLine(tmpBuffer[j], tmpBuffer[j+1]);}
+		}
+		fillMnog();
+		buffer = [];
+	}
+		
+	
+	
+	function rectFunction() {
+		canvas.removeEventListener('click', drawListener, false);
+		canvas.addEventListener('click', rectListener, false);
+	}
+	function drawFunction() {
+		canvas.removeEventListener('click', rectListener, false);
+		canvas.addEventListener('click', drawListener, false);
+	}
+</script> 
+</BODY> 
+</HTML>
